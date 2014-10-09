@@ -59,18 +59,21 @@ namespace Task2
                 int k0 = K0(i);
                 int kn = Kn(i);
                 int tmp = k0;
-                for (int t = i - l; t < i; t++)
+                for (int t = i - l + 1; t < i; t++)
                 {
-                    if (t > i)
+                    if (t >= 0)
                     {
-                        f[i] += matr[t, l - t + i] * x[tmp];
+                        f[i] += matr[t, l + t - i] * x[tmp];
                         tmp++;
                     }
                 }
-                for (int j = i; j < l; j++)
+                for (int j = 0; j < l; j++)
                 {
-                    f[i] += matr[i, j] * x[tmp];
-                    tmp++;
+                    if (tmp < 5)
+                    {
+                        f[i] += matr[i, j] * x[tmp];
+                        tmp++;
+                    }
                 }
                 int q = 0;
             }
@@ -91,7 +94,7 @@ namespace Task2
         {
             n = 5;
             l = 2;
-            Generate(5, 2);
+            Generate(n, l);
         }
     }
 }
