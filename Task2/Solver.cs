@@ -8,7 +8,6 @@ namespace Task2
     class Solver
     {
         double[,] matr;
-        double[] result;
         double[] x;
         double[] f;
         int n;
@@ -16,11 +15,6 @@ namespace Task2
         public Solver()
         {
         }
-        public double[] Solve()
-        {
-            return null;
-        }
-
         private int K0(int i)
         {
             if (i < l)
@@ -38,7 +32,6 @@ namespace Task2
         public void Generate(int n, int l)
         {
             matr = new double[n, l];
-            result = new double[n];
             x = new double[n];
             f = new double[n];
             Random rnd = new Random();
@@ -69,13 +62,12 @@ namespace Task2
                 }
                 for (int j = 0; j < l; j++)
                 {
-                    if (tmp < 5)
+                    if (tmp < n)
                     {
                         f[i] += matr[i, j] * x[tmp];
                         tmp++;
                     }
                 }
-                int q = 0;
             }
 
         }
@@ -90,11 +82,43 @@ namespace Task2
             }
             return res;
         }
+
+        private double[] Solve()
+        {
+            double[,] bc = new double[n,2*l-1];
+            for (int i = 0; i< n; i++)
+            {
+
+            }
+            for (int j = 0; j < n; j++)
+            {
+                for (int i = j; j <= Kn(j); j++)
+                {
+                    double s = matr[i, i + j];
+                    for (int k = K0(i); k < j - 1; j++)
+                    {
+                       
+                    }
+                }
+            }
+            return null;
+        }
+
         public void Form_Answer(int test, int N, int L, ref double avg)
         {
-            n = 5;
-            l = 2;
-            Generate(n, l);
+            n = N;
+            l = L;
+            avg = 0;
+            for (int i = 0; i < test; i++)
+            {
+                Generate(n, 10);
+                while (Solve() == null)
+                {
+                    Generate(n, 10);
+                }
+                avg += Get_Avg(f, x);
+            }
+            avg /= test;
         }
     }
 }
