@@ -86,35 +86,50 @@ namespace Task2
         private double[] Solve()
         {
             double[,] bc = new double[n,2*l-1];
-            for (int i = 0; i< n; i++)
-            {
-
-            }
+            double[,] bc_tmp = new double[n , n];
+            double s;
             for (int j = 0; j < n; j++)
             {
-                for (int i = j; j <= Kn(j); j++)
+                for (int i = j; i <= Kn(j); i++)
                 {
-                    double s = matr[i, i + j];
+                    s = matr[i, i - j];
                     for (int k = K0(i); k < j - 1; j++)
                     {
-                       
+                        s -= bc[i, k - i + l] * bc[k, j - k + l];
+                        s -= bc_tmp[i, k] * bc_tmp[k, j];
                     }
+                   bc[i, i - j] = s;
+                   bc_tmp[i, j] = s;
+                }
+                for (int i = j + 1; i <= Kn(j); i++)
+                {
+                    s = matr[j, i - j];
+                    for (int k = K0(i); k <j - 1; j++)
+                    {
+                        s -= bc[j, k - j + l] * bc[k, i - k + l];
+                        s -= bc_tmp[j, k] * bc_tmp[k, i];
+                    }
+                    bc[j, i - j] =s/ bc[j, i - j];
+                    bc_tmp[j, i] = s / bc_tmp[j, j];
                 }
             }
+            //B*Y = F
+            //C*X = Y
+            int k1;
             return null;
         }
 
         public void Form_Answer(int test, int N, int L, ref double avg)
         {
-            n = N;
-            l = L;
+            n = 5;
+            l = 2;
             avg = 0;
             for (int i = 0; i < test; i++)
             {
-                Generate(n, 10);
+                Generate(n, l);
                 while (Solve() == null)
                 {
-                    Generate(n, 10);
+                    Generate(n, l);
                 }
                 avg += Get_Avg(f, x);
             }
