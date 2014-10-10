@@ -7,7 +7,12 @@ namespace Task2
 {
     class Solver
     {
-        double[,] matr;
+        double[,] matr = {
+                         { -8, 8},
+                         { 1, -2},
+                         { -7, 0},
+                         { 6, -7},
+                         { 10, 0}};
         double[] x;
         double[] f;
         int n;
@@ -31,19 +36,19 @@ namespace Task2
 
         public void Generate(int n, int l)
         {
-            matr = new double[n, l];
+           // matr = new double[n, l];
             x = new double[n];
             f = new double[n];
             Random rnd = new Random();
             int k = 0;
-            for (int i = 0; i < l; i++)
+            /*for (int i = 0; i < l; i++)
             {
                 for (int j = 0; j < n - k; j++)
                 {
                     matr[j,i] =  rnd.Next(-10, 10);
                 }
                 k++;
-            }
+            }*/
             for (int i = 0; i<n; i++)
                 x[i] = rnd.Next(-10, 10);
 
@@ -83,35 +88,48 @@ namespace Task2
             return res;
         }
 
+        double GetValue(int i, int j)
+        {
+            if (i >= j)
+            {
+                return matr[j, i-j];
+            }
+            return matr[i, j-i];
+        }
+
         private double[] Solve()
         {
             double[,] bc = new double[n,2*l-1];
             double[,] bc_tmp = new double[n , n];
-            double s;
             for (int j = 0; j < n; j++)
             {
-                for (int i = j; i <= Kn(j); i++)
+                int kn = Kn(j);
+                for (int i = 0; i <= kn; i++)
                 {
-                    s = matr[i, i - j];
-                    for (int k = K0(i); k < j - 1; j++)
+                    double s = 0;
+                    int k0 = K0(i);
+                    for (int k = k0; k <= j - 1; j++)
                     {
-                        s -= bc[i, k - i + l] * bc[k, j - k + l];
-                        s -= bc_tmp[i, k] * bc_tmp[k, j];
+                        if ((k - i + l - 1) >= 0)
+                            s += bc[i, k - i + l - 1] * bc[k, j - k + l - 1];
                     }
-                   bc[i, i - j] = s;
-                   bc_tmp[i, j] = s;
+                    bc[i, j - i + l - 1] = GetValue(i,j) - s;
                 }
-                for (int i = j + 1; i <= Kn(j); i++)
+                
+                for (int i = j; i <= kn; i++)
                 {
-                    s = matr[j, i - j];
-                    for (int k = K0(i); k <j - 1; j++)
+                    double s = 0;
+                    int k0 = K0(j);
+                    for (int k = k0; k <=j - 1; k++)
                     {
-                        s -= bc[j, k - j + l] * bc[k, i - k + l];
-                        s -= bc_tmp[j, k] * bc_tmp[k, i];
+                        if ((l + i - k - 1) < 2 * l - 1)
+                            s += bc[j, k - j + l - 1] * bc[k, l + i - k - 1];
                     }
-                    bc[j, i - j] =s/ bc[j, i - j];
-                    bc_tmp[j, i] = s / bc_tmp[j, j];
+                    if (bc[j, l - 1] == 0)
+                        return null;
+                    bc[j, i - j + l - 1] = (GetValue(j,i) - s) / bc[j, l - 1];
                 }
+                 
             }
             //B*Y = F
             //C*X = Y
