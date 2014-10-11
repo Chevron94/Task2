@@ -17,13 +17,13 @@ namespace Task2
         private void запускToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             Solver slv = new Solver();
-            int[] data = { 60, 500 };
-            int[] L = { 6, 15, 50, 125 };
+            int[] data = { 10, 80, 800, 800 };
+            int[] L = { 3, 8, 20, 80 };
             for (int i = 0; i < 4; i++)
             {
                 dgvResult.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
-                dgvResult.Rows[i].Cells[1].Value = data[i / 2].ToString(); // размерность
-                dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i / 2]).ToString(); // Отношение L/N
+                dgvResult.Rows[i].Cells[1].Value = data[i].ToString(); // размерность
+                dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i]).ToString(); // Отношение L/N
 
                 dgvResult.Rows[i].Cells[3].Value = "";
             }
@@ -33,9 +33,9 @@ namespace Task2
 
                 double avg = 0;
                 dgvResult.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
-                dgvResult.Rows[i].Cells[1].Value = data[i / 2].ToString(); // размерность
-                dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i / 2]).ToString(); // Отношение L/N
-                slv.Form_Answer(100, data[i / 2], L[i], ref avg);
+                dgvResult.Rows[i].Cells[1].Value = data[i].ToString(); // размерность
+                dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i]).ToString(); // Отношение L/N
+                slv.Form_Answer(50, data[i], L[i], ref avg);
                 dgvResult.Rows[i].Cells[3].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
                 Application.DoEvents();
             }

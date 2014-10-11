@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Task2
 {
     class Solver
     {
-        double[,] matr = {
-                         { -8, 8},
-                         { 1, -2},
-                         { -7, 0},
-                         { 6, -7},
-                         { 10, 0}};
+        double[,] matr;
         double[] x;
         double[] f;
         int n;
@@ -34,23 +30,39 @@ namespace Task2
             return i + l - 1;
         }
 
+        private int K0_BC(int i)
+        {
+            if (i < l - 1)
+                return l - i - 1;
+            else
+                return 0;
+        }
+
+        private int Kn_BC(int i)
+        {
+            if (i <= n - l)
+                return 2 * l - 2;
+            else
+                return n - 2 - (i - l);
+        }
+
         public void Generate(int n, int l)
         {
-           // matr = new double[n, l];
+            matr = new double[n, l];
             x = new double[n];
             f = new double[n];
             Random rnd = new Random();
             int k = 0;
-            /*for (int i = 0; i < l; i++)
+            for (int i = 0; i < l; i++)
             {
                 for (int j = 0; j < n - k; j++)
                 {
-                    matr[j,i] =  rnd.Next(-10, 10);
+                    matr[j,i] =rnd.Next(-10, 10);
                 }
                 k++;
-            }*/
+            }
             for (int i = 0; i<n; i++)
-                x[i] = rnd.Next(-10, 10);
+                x[i] =  rnd.Next(-10, 10);
 
             for (int i = 0; i < n; i++)
             {
@@ -75,6 +87,7 @@ namespace Task2
                 }
             }
 
+            Thread.Sleep(1);
         }
         private double Get_Avg(double[] solution, double[] x) // Вычисление погрешности
         {
@@ -100,23 +113,22 @@ namespace Task2
         private double[] Solve()
         {
             double[,] bc = new double[n,2*l-1];
-            double[,] bc_tmp = new double[n , n];
+            // bc - OK!
             for (int j = 0; j < n; j++)
             {
                 int kn = Kn(j);
-                for (int i = 0; i <= kn; i++)
+                for (int i = j; i <= kn; i++)
                 {
                     double s = 0;
                     int k0 = K0(i);
-                    for (int k = k0; k <= j - 1; j++)
+                    for (int k = k0; k < j ; k++)
                     {
-                        if ((k - i + l - 1) >= 0)
-                            s += bc[i, k - i + l - 1] * bc[k, j - k + l - 1];
+                        s += bc[i, k - i + l - 1] * bc[k, j - k + l - 1];
                     }
-                    bc[i, j - i + l - 1] = GetValue(i,j) - s;
+                    bc[i,j - i + l - 1] = GetValue(i,j) - s;
                 }
                 
-                for (int i = j; i <= kn; i++)
+                for (int i = j+1; i <= kn; i++)
                 {
                     double s = 0;
                     int k0 = K0(j);
@@ -127,20 +139,37 @@ namespace Task2
                     }
                     if (bc[j, l - 1] == 0)
                         return null;
-                    bc[j, i - j + l - 1] = (GetValue(j,i) - s) / bc[j, l - 1];
+                    bc[j, i - j + l - 1] = (GetValue(j,i) - s) / bc[j,l - 1];
                 }
                  
             }
-            //B*Y = F
-            //C*X = Y
-            int k1;
-            return null;
+            // BY = F
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = K0_BC(i); j <= l - 2; j++)
+                {
+                    f[i] -= f[i - (l - 1) + j] * bc[i, j];
+                    bc[i, j] = 0;
+                }
+                if (bc[i, l - 1] == 0)
+                    return null;
+                f[i] /= bc[i, l - 1];
+                bc[i, l - 1] = 1;
+            }
+            // AX = Y
+            for (int i = n - 2; i >= 0; i--)
+                for (int j = l; j <= Kn_BC(i); j++)
+                {
+                    f[i] -= f[j - l + i + 1] * bc[i, j];
+                    bc[i, j] = 0;
+                }
+            return f;
         }
 
         public void Form_Answer(int test, int N, int L, ref double avg)
         {
-            n = 5;
-            l = 2;
+            n = N;
+            l = L;
             avg = 0;
             for (int i = 0; i < test; i++)
             {
