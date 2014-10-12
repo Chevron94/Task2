@@ -11,13 +11,14 @@ namespace Task2
         {
             InitializeComponent();
             dgvResult.Rows.Add(4);
+            GoodMatrix.Rows.Add(4);
             
         }
 
         private void запускToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             Solver slv = new Solver();
-            int[] data = { 10, 80, 800, 800 };
+            int[] data = { 8, 80, 800, 800 };
             int[] L = { 3, 8, 20, 80 };
             for (int i = 0; i < 4; i++)
             {
@@ -32,11 +33,23 @@ namespace Task2
             {
 
                 double avg = 0;
-                dgvResult.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
-                dgvResult.Rows[i].Cells[1].Value = data[i].ToString(); // размерность
                 dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i]).ToString(); // Отношение L/N
-                slv.Form_Answer(50, data[i], L[i], ref avg);
+             //   slv.Form_Answer(50, data[i], L[i], ref avg);
                 dgvResult.Rows[i].Cells[3].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
+                Application.DoEvents();
+            }
+            int[] matr = {40,60, 280, 670};
+            for (int i = 0; i < 4; i++)
+            {
+                GoodMatrix.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
+                GoodMatrix.Rows[i].Cells[1].Value = matr[i].ToString(); // размерность
+                Application.DoEvents();
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                double avg = 0;
+                slv.Form_Good_And_Bad_Answer(50, matr[i], ref avg);
+                GoodMatrix.Rows[i].Cells[2].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
                 Application.DoEvents();
             }
         }
