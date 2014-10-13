@@ -5,3 +5,11 @@ D:\Labs\3 курс\1 семестр\МВ\Task2\Task2\obj\x86\Debug\Task2.Propert
 D:\Labs\3 курс\1 семестр\МВ\Task2\Task2\obj\x86\Debug\Task2.csproj.GenerateResource.Cache
 D:\Labs\3 курс\1 семестр\МВ\Task2\Task2\obj\x86\Debug\Task2.exe
 D:\Labs\3 курс\1 семестр\МВ\Task2\Task2\obj\x86\Debug\Task2.pdb
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.exe
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.pdb
+C:\Программирование\5 семестр\МВ\task2\Task2\bin\Debug\Task2.exe
+C:\Программирование\5 семестр\МВ\task2\Task2\bin\Debug\Task2.pdb
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.csprojResolveAssemblyReference.cache
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.Form1.resources
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.Properties.Resources.resources
+C:\Программирование\5 семестр\МВ\task2\Task2\obj\x86\Debug\Task2.csproj.GenerateResource.Cache

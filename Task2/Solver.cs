@@ -57,34 +57,39 @@ namespace Task2
             {
                 for (int j = 0; j < n - k; j++)
                 {
-                    matr[j,i] =rnd.Next(-10, 10);
+                    matr[j, i] = rnd.NextDouble() * rnd.Next(-10, 10);
+                }
+                for (int j = n - k; j < n; j++)
+                {
+                    matr[j, i] = Double.MaxValue;
                 }
                 k++;
             }
-            for (int i = 0; i<n; i++)
-                x[i] =  rnd.Next(-10, 10);
+            for (int i = 0; i < n; i++)
+                x[i] = rnd.NextDouble()*rnd.Next(-10, 10);
 
             for (int i = 0; i < n; i++)
             {
-                int k0 = K0(i);
-                int kn = Kn(i);
-                int tmp = k0;
-                for (int t = i - l + 1; t < i; t++)
+                double sum = 0;
+                int pos_x = Kn(i);
+                for (int j = l - 1; j >= 0; j--)
                 {
-                    if (t >= 0)
+                    if (matr[i, j] != Double.MaxValue)
                     {
-                        f[i] += matr[t, l + t - i] * x[tmp];
-                        tmp++;
+                        sum += matr[i, j] * x[pos_x];
+                        pos_x--;
                     }
                 }
-                for (int j = 0; j < l; j++)
+                int m = 1;
+                for (int j = 1; j < l; j++)
                 {
-                    if (tmp < n)
-                    {
-                        f[i] += matr[i, j] * x[tmp];
-                        tmp++;
-                    }
+                    if (i - m < 0)
+                        break;
+                    sum += matr[i - m, j] * x[pos_x];
+                    m++;
+                    pos_x--;
                 }
+                f[i] = sum;
             }
 
             Thread.Sleep(1);
