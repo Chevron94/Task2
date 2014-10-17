@@ -12,14 +12,20 @@ namespace Task2
             InitializeComponent();
             dgvResult.Rows.Add(4);
             GoodMatrix.Rows.Add(4);
+            BadMatrix.Rows.Add(6);
             
         }
 
         private void запускToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            //Solver slv = new Solver();
-            int[] data = { 80, 80, 800, 800 };
-            int[] L = { 8, 10, 80, 100 };
+            dgvResult.Rows.Clear();
+            GoodMatrix.Rows.Clear();
+            BadMatrix.Rows.Clear();
+            dgvResult.Rows.Add(4);
+            GoodMatrix.Rows.Add(4);
+            BadMatrix.Rows.Add(6);
+            int[] data = { 40, 40, 400, 400 };
+            int[] L = { 4, 10, 39, 98 };
             for (int i = 0; i < 4; i++)
             {
                 dgvResult.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
@@ -49,9 +55,24 @@ namespace Task2
             {
                 Solver slv = new Solver();
                 double avg = 0;
-                slv.Form_Good_And_Bad_Answer(10, matr[i], ref avg,0);
+                slv.Form_Answer(10, matr[i], matr[i], ref avg);
                 GoodMatrix.Rows[i].Cells[2].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
                 Application.DoEvents();
+            }
+            int[] badmatr = { 20, 50 };
+            int[] k = { 2, 4, 6 };
+            for (int i = 0; i < 6; i++)
+            {
+                BadMatrix.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
+                BadMatrix.Rows[i].Cells[1].Value = (k[i%3]).ToString(); // k
+                BadMatrix.Rows[i].Cells[2].Value = (badmatr[i/3]).ToString(); // номер
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                Solver slv = new Solver();
+                double avg = 0;
+                slv.Form_Answer(100, badmatr[i/3],badmatr[i/3], ref avg, k[i%3]);
+                BadMatrix.Rows[i].Cells[3].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
             }
         }
     }

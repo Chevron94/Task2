@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
+
 namespace Task2
 {
     class Solver
@@ -46,30 +47,17 @@ namespace Task2
                 return n - 2 - (i - L);
         }
 
-        public void Generate(int n, int l)
+        private void Generate_X_F(int n, int l)
         {
-            matr = new double[n, l];
             x = new double[n];
             f = new double[n];
             Random rnd = new Random();
-            int k = 0;
-            for (int i = 0; i < l; i++)
-            {
-                for (int j = 0; j < n - k; j++)
-                {
-                    matr[j, i] = rnd.NextDouble() * rnd.Next(-10, 10);
-                }
-                for (int j = n - k; j < n; j++)
-                {
-                    matr[j, i] = Double.MaxValue;
-                }
-                k++;
-            }
             for (int i = 0; i < n; i++)
-                x[i] = rnd.NextDouble()*rnd.Next(-10, 10);
+                x[i] = rnd.NextDouble() * rnd.Next(-10, 10);
 
             for (int i = 0; i < n; i++)
             {
+                
                 double sum = 0;
                 int pos_x = Kn(i);
                 for (int j = l - 1; j >= 0; j--)
@@ -91,7 +79,26 @@ namespace Task2
                 }
                 f[i] = sum;
             }
+        }
 
+        public void Generate(int n, int l)
+        {
+            matr = new double[n, l];
+            Random rnd = new Random();
+            int k = 0;
+            for (int i = 0; i < l; i++)
+            {
+                for (int j = 0; j < n - k; j++)
+                {
+                    matr[j, i] = rnd.NextDouble() * rnd.Next(-10, 10);
+                }
+                for (int j = n - k; j < n; j++)
+                {
+                    matr[j, i] = Double.MaxValue;
+                }
+                k++;
+            }
+            Generate_X_F(n, l);
             Thread.Sleep(1);
         }
         private double Get_Avg(double[] solution, double[] x) // Вычисление погрешности
@@ -114,6 +121,62 @@ namespace Task2
             }
             return matr[i, j-i];
         }
+
+
+
+        double[] SolveSqardMatrix()
+        {
+            double[,] bc = new double[n, n];
+            // BC
+            for (int j = 0; j < n; j++)
+            {
+                for (int i = j; i < n; i++)
+                {
+                    double s = matr[i, j];
+                    for (int k = 0; k < j - 1; k++)
+                    {
+                        s -= bc[i, k] * bc[k, j];
+                    }
+                    bc[i, j] = s;
+                }
+                for (int i = j + 1; i < n; i++)
+                {
+                    double s = matr[j, i];
+                    for (int k = 0; k < j - 1; k++)
+                    {
+                        s -= bc[j, k] * bc[k, i];
+                    }
+                    bc[j, i] = (s / bc[j, j]);
+                }
+
+            }
+            //B*y = f
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    f[i] -= f[j] * bc[i, j];
+                }
+                if (bc[i, i] == 0)
+                    return null;
+                f[i] /= bc[i, i];
+                //bc[i, i] = 1;
+            }
+            // Ax = Y
+            for (int i = n - 1; i >= 0; i--)
+            {
+                for (int j = i + 1; j < n; j++)
+                {
+                    f[i] -= f[j] * bc[i, j];
+                }
+                //base[]
+            }
+            if (f.Contains(double.NaN) || f.Contains(double.NegativeInfinity) || f.Contains(double.PositiveInfinity))
+                return null;
+            return f;
+        }
+
+
 
         private double[] Solve()
         {
@@ -171,126 +234,75 @@ namespace Task2
                 }
             return f;
         }
-
-        double[] SolveSqardMatrix()
-        {
-            double[,] bc = new double[n,n];
-            // BC
-            for(int j = 0; j < n; j++)
-            {
-                for (int i = j; i < n; i++)
-                {
-                    double s = matr[i, j];
-                    for (int k = 0; k <= j - 1; k++)
-                    {
-                        s -= bc[i, k] * bc[k, j];
-                    }
-                    bc[i, j] = s;
-                }
-                for (int i = j + 1; i < n; i++)
-                {
-                    double s = matr[j, i];
-                    for (int k = 0; k < j - 1; k++)
-                    {
-                        s -= bc[j, k] * bc[k, i];
-                    }
-                    bc[j, i] = s/bc[j,j];
-                }
-
-            }
-            //B*y = f
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < i; j++)
-                {
-                    f[i] -= f[j] * bc[i, j];
-                }
-                if (bc[i, i] == 0)
-                    return null;
-                f[i] /= bc[i, i];
-                bc[i, i] = 1;
-            }
-            // Ax = Y
-            for (int i = n-1; i >=0; i--)
-            {
-                for (int j = i + 1; j < n; j++)
-                {
-                    f[i] -= f[j] * bc[i, j];
-                }
-            }
-            if (f.Contains(double.NaN) || f.Contains(double.NegativeInfinity) || f.Contains(double.PositiveInfinity))
-                return null;
-            return f;
-        }
-
-        public void Form_Answer(int test, int N, int _L, ref double avg)
+        public void Form_Answer(int test, int N, int _L, ref double avg, int k=0)
         {
             n = N;
             L = _L;
             avg = 0;
             for (int i = 0; i < test; i++)
             {
-                Generate(n, L);
-                while (Solve() == null)
+                if (k == 0)
                 {
                     Generate(n, L);
+                    while (Solve() == null)
+                    {
+                        Generate(n, L);
+                    }
+                }
+                else
+                {
+                    Generate_Bad(k);
+                    while (SolveSqardMatrix() == null)
+                    {
+                        Generate_Bad(k);
+                    }
                 }
                 avg += Get_Avg(f, x);
             }
             avg /= test;
         }
 
-        private void RandomMatr(int n)
-        {
-            Random rand = new Random();
-            matr = new double[n, n];
-            for(int i = 0; i<n; i++)
-                for(int j = 0; j< n; j++)
-                    matr[i, j] =  rand.Next(-10, 10);
-        }
-
-        private void Generate_F_and_X()
-        {
-            Random rand = new Random();
-            x = new double[n];
-            for (int i = 0; i < n; i++)
-                x[i] = rand.Next(-10, 10);
-            f = new double[n];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < n; j++)
-                    f[i] += matr[i, j]*x[j];
-        }
-
-        private double[,] RandomUpTreugolMatr(int n)
+        private double[,] RandomUpTreugolMatr(int n, int k)
         {
             Random rand = new Random();
             double[,] res = new double[n, n];
             for (int i = 0; i < n; i++)
                 for (int j = i; j <= Kn(i); j++)
                     res[i, j] = (rand.NextDouble() - 0.5) * 2 * rand.Next(-10,10);
+            for (int i=0; i<n; i++)
+                res[i,i]  /= Math.Pow(10, k);
             return res;
         }
 
-        private double[,] RandomDownTreugolMatr(int n)
+        private double[,] RandomDownTreugolMatr(int n, int k)
         {
             Random rand = new Random();
             double[,] res = new double[n,n];
             for (int i = 0; i < n; i++)
                 for (int j = K0(i); j <= i; j++)
                     res[i, j] = (rand.NextDouble() - 0.5) * 2 * rand.Next(-10, 10);
+            for (int i = 0; i < n; i++)
+                res[i, i] /= Math.Pow(10, k);
             return res;
+        }
+
+        private void Generate_SQARD_F_X(int n)
+        {
+            Random rand = new Random();
+            x = new double[n];
+            for(int i = 0; i<n; i++)
+                x[i] = (rand.NextDouble() - 0.5) * 2 * rand.Next(-10, 10);
+
+            f = new double[n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    f[i] += matr[i, j] * x[j];
         }
 
         private void Generate_Bad(int k)
         {
-            GetBadMatr(RandomDownTreugolMatr(n), RandomUpTreugolMatr(n), n, k);
-            Generate_F_and_X();
-        }
-
-        private void Generate_Good()
-        {
-            RandomMatr(n);
-            Generate_F_and_X();
+            GetBadMatr(RandomDownTreugolMatr(n,k), RandomUpTreugolMatr(n,k), n, k);
+            Generate_SQARD_F_X(n);
         }
 
         private void GetBadMatr(double[,] a, double[,] b, int n, int r)
@@ -300,28 +312,6 @@ namespace Task2
                 for (int j = 0; j < n; j++)
                     for (int k = 0; k < n; k++)
                         matr[i, j] += a[i, k] * b[k, j];
-            for (int i = 0; i < n; i++)
-                matr[i, i] /= Math.Pow(10, r);
-        }
-
-        public void Form_Good_And_Bad_Answer(int test, int N, ref double avg, int k = 1)
-        {
-            n = N;
-            avg = 0;
-            for (int i = 0; i < test; i++)
-            {
-                if (k > 1)
-                    Generate_Bad(k);
-                else Generate_Good();
-                while (SolveSqardMatrix() == null)
-                {
-                    if (k > 1)
-                        Generate_Bad(k);
-                    else Generate_Good();
-                }
-                avg += Get_Avg(f, x);
-            }
-            avg /= test;
         }
     }
 }
