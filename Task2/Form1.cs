@@ -24,8 +24,8 @@ namespace Task2
             dgvResult.Rows.Add(4);
             GoodMatrix.Rows.Add(4);
             BadMatrix.Rows.Add(6);
-            int[] data = { 40, 40, 400, 400 };
-            int[] L = { 4, 10, 39, 98 };
+            int[] data = { 40, 40, 250, 250 };
+            int[] L = { 4, 10, 25, 50 };
             for (int i = 0; i < 4; i++)
             {
                 dgvResult.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
@@ -40,11 +40,11 @@ namespace Task2
                 Solver slv = new Solver();
                 double avg = 0;
                 dgvResult.Rows[i].Cells[2].Value = ((double)L[i] / data[i]).ToString(); // Отношение L/N
-                slv.Form_Answer(10, data[i], L[i], ref avg);
+                slv.Form_Answer(30, data[i], L[i], ref avg);
                 dgvResult.Rows[i].Cells[3].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
                 Application.DoEvents();
             }
-            int[] matr = {40,60, 280, 670};
+            int[] matr = {40,80, 200, 350};
             for (int i = 0; i < 4; i++)
             {
                 GoodMatrix.Rows[i].Cells[0].Value = (i + 1).ToString(); // номер
@@ -55,11 +55,11 @@ namespace Task2
             {
                 Solver slv = new Solver();
                 double avg = 0;
-                slv.Form_Answer(10, matr[i], matr[i], ref avg);
+                slv.Form_Answer(30, matr[i], matr[i], ref avg);
                 GoodMatrix.Rows[i].Cells[2].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
                 Application.DoEvents();
             }
-            int[] badmatr = { 20, 50 };
+            int[] badmatr = { 20, 60 };
             int[] k = { 2, 4, 6 };
             for (int i = 0; i < 6; i++)
             {
@@ -71,7 +71,7 @@ namespace Task2
             {
                 Solver slv = new Solver();
                 double avg = 0;
-                slv.Form_Answer(100, badmatr[i/3],badmatr[i/3], ref avg, k[i%3]);
+                slv.Form_Answer(30, badmatr[i/3],badmatr[i/3], ref avg, k[i%3]);
                 BadMatrix.Rows[i].Cells[3].Value = avg.ToString("G3", CultureInfo.InvariantCulture);
             }
         }
